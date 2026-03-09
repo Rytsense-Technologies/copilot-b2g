@@ -89,10 +89,9 @@ const apiCall = async <T>(
 };
 
 export const ChatService = {
-  getFaqQuestions: async (url?: string): Promise<string[]> => {
+  getFaqQuestions: async (url: string = "https://example.com"): Promise<string[]> => {
     try {
-      const currentUrl = url || "https://example.com";
-      const response = await apiCall<FaqResponse>(`/b2g/v1/faq-questions?url=${encodeURIComponent(currentUrl)}`, {
+      const response = await apiCall<FaqResponse>(`/b2g/v1/faq-questions?url=${encodeURIComponent(url)}`, {
         method: 'GET',
       });
       return response.data || [];

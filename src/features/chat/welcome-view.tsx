@@ -4,13 +4,15 @@ interface WelcomeViewProps {
   userName?: string;
   message?: string | null;
   suggestions?: string[];
+  isLoading?: boolean;
 }
 
 export function WelcomeView({ 
   onSelectSuggestion, 
   userName = "Vishwa", 
   message,
-  suggestions: providedSuggestions = []
+  suggestions: providedSuggestions = [],
+  isLoading = false
 }: WelcomeViewProps) {
   const defaultSuggestions = [
     "Help me get started",
@@ -18,7 +20,7 @@ export function WelcomeView({
     "Is this course for me?",
   ];
 
-  const suggestions = providedSuggestions.length > 0 ? providedSuggestions : defaultSuggestions;
+  const suggestions = providedSuggestions.length > 0 ? providedSuggestions : (isLoading ? [] : defaultSuggestions);
 
   return (
     <div className="flex flex-col items-center justify-start p-8 min-h-full space-y-10 animate-in fade-in duration-700 bg-white">
@@ -55,7 +57,15 @@ export function WelcomeView({
       </div>
 
       <div className="flex flex-col w-full space-y-4">
-        {suggestions.map((text) => (
+        {isLoading && (
+          <div className="flex flex-col gap-3">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-[52px] w-48 bg-slate-50 border-2 border-slate-100/50 rounded-xl animate-pulse" />
+            ))}
+          </div>
+        )}
+        
+        {!isLoading && suggestions.map((text) => (
           <button
             key={text}
             onClick={() => onSelectSuggestion(text)}

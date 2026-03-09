@@ -24,11 +24,15 @@ export function ChatPanel({
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
 
   // Fetch FAQ questions if not provided
-  const { data: faqs = faqQuestions } = useQuery({
+  // Fetch FAQ questions
+  const { data: faqs, isLoading: isFaqLoading } = useQuery({
     queryKey: ['faqs'],
-    queryFn: () => ChatService.getFaqQuestions(),
-    enabled: faqQuestions.length === 0,
-    initialData: faqQuestions
+    queryFn: async () => {
+      const data = await ChatService.getFaqQuestions("https://example.com");
+      console.log('ChatPanel FAQ data fetched:', data);
+      return data;
+    },
+    initialData: faqQuestions.length > 0 ? faqQuestions : undefined
   });
 
   // Fetch chat history
@@ -123,9 +127,10 @@ export function ChatPanel({
 
   if (messages.length === 0 && !isHistoryLoading) {
     return (
-      <div className="flex flex-col h-full bg-slate-50/50">
-        <div className="flex-1 overflow-y-auto">
+      <div className="flex flex-col h-full bg-slate-50/50 relative">
+        <div className="flex-1 overflow-y-auto pb-32">
           <WelcomeView 
+            isLoading={isFaqLoading}
             message={initMessage} 
             onSelectSuggestion={handleSend} 
             suggestions={faqs}
